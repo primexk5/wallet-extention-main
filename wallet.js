@@ -1,13 +1,10 @@
-/**
- * Wallet Logic
- * Simulates encrypted storage and transaction logic.
- */
+
 class WalletManager {
     constructor() {
         this.address = null;
         this.balance = 0;
         this.history = [];
-        this.currentPin = null; // In memory only
+        this.currentPin = null; 
     }
 
     hasWallet() {
@@ -19,8 +16,6 @@ class WalletManager {
         if (!data) return false;
         
         const parsed = JSON.parse(data);
-        // In a real app, you would hash the PIN and verify the hash
-        // Here we do a simple string comparison for the mock
         if (parsed.pin === pin) {
             this.address = parsed.address;
             this.balance = parsed.balance;
@@ -32,7 +27,6 @@ class WalletManager {
     }
 
     generateMnemonic() {
-        // Use ethers to generate a random wallet
         const wallet = ethers.Wallet.createRandom();
         return {
             phrase: wallet.mnemonic.phrase,
@@ -42,7 +36,7 @@ class WalletManager {
 
     saveWallet(pin, address) {
         this.address = address;
-        this.balance = 2.5; // Give some mock ETH to start
+        this.balance = 2.5; 
         this.history = [];
         this.currentPin = pin;
         this.save();
