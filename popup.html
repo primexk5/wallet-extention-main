@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>My Wallet</h2>
+        
+        <!-- Login View -->
+        <div id="login-view" class="hidden">
+            <p>Welcome back!</p>
+            <input type="password" id="login-password" placeholder="Enter 4-digit PIN" maxlength="4">
+            <button id="btn-login">Unlock</button>
+            <p id="login-error" class="error hidden"></p>
+        </div>
+
+        <!-- Setup View -->
+        <div id="setup-view" class="hidden">
+            <p>Get started with your crypto wallet.</p>
+            <button id="btn-create-start">Create New Wallet</button>
+            <!-- Import functionality omitted for brevity in this step, focusing on create -->
+        </div>
+
+        <!-- Seed Phrase View -->
+        <div id="seed-view" class="hidden">
+            <h3>Secret Recovery Phrase</h3>
+            <p class="small-text">Save these words in a safe place. You will need them to recover your wallet.</p>
+            <div id="seed-phrase" class="seed-box"></div>
+            <button id="btn-confirm-seed">I Have Saved It</button>
+        </div>
+
+        <!-- PIN Setup View -->
+        <div id="pin-setup-view" class="hidden">
+            <h3>Create Login PIN</h3>
+            <p>Set a 4-digit PIN to quickly access your wallet.</p>
+            <input type="password" id="setup-pin" placeholder="4-digit PIN" maxlength="4">
+            <button id="btn-set-pin">Set PIN</button>
+        </div>
+
+        <!-- Main Wallet View -->
+        <div id="wallet-view" class="hidden">
+            <span id="address"></span>
+            <h1><span id="balance">0.00</span> ETH</h1>
+            
+            <div id="send-section">
+                <h3>Send ETH</h3>
+                <input type="text" id="send-to" placeholder="Recipient Address (0x...)">
+                <input type="number" id="send-amount" placeholder="Amount">
+                <button id="btn-send">Send</button>
+                <p id="send-msg" class="error hidden"></p>
+            </div>
+
+            <h3>History</h3>
+            <div id="tx-history">
+                <!-- Transactions will be injected here -->
+            </div>
+            <button id="btn-logout" class="secondary-btn">Logout</button>
+        </div>
+    </div>
+    <script src="node_modules/ethers/dist/ethers.umd.js"></script>
+    <script src="wallet.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>
