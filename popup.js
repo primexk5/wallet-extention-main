@@ -90,6 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
     btnSend.addEventListener('click', () => {
         const to = sendToInput.value;
         const amount = sendAmountInput.value;
+        if(!to || !amount) {
+            sendMsg.textContent = "Please fill in all fields";
+            sendMsg.style.color = "#ff6b6b";
+            sendMsg.classList.remove('hidden');
+            return;
+        }
         try {
             walletManager.sendTransaction(to, amount);
             updateUI();
