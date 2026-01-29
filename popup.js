@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sendMsg.classList.remove('hidden');
             return;
         }
+        
         try {
             walletManager.sendTransaction(to, amount);
             updateUI();
