@@ -71,13 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
         seedView.classList.remove('hidden');
     });
 
-    
+    // Step 2: Confirm Saved
     btnConfirmSeed.addEventListener('click', () => {
         seedView.classList.add('hidden');
         pinSetupView.classList.remove('hidden');
     });
 
-    
+    // Step 3: Set PIN and Create
     btnSetPin.addEventListener('click', () => {
         const pin = setupPinInput.value;
         if (!/^\d{4}$/.test(pin)) {
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sendMsg.classList.remove('hidden');
             return;
         }
-
+        
         try {
             walletManager.sendTransaction(to, amount);
             updateUI();
