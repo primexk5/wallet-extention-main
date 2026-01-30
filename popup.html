@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BetaSafe Wallet</title>
     <link rel="stylesheet" href="style.css">
+    
 </head>
 <body>
     <div class="container">
+    
         <h2>BetaSafe</h2>
         <div id="login-view" class="hidden">
             <p>Welcome back!</p>
@@ -19,6 +21,7 @@
         <div id="setup-view" class="hidden">
             <video class="vid" src="./image/loginAnimation.mp4" muted autoplay loop></video>
             <button id="btn-create-start">Create New Wallet</button>
+            <button id="btn-recover-mode" class="secondary-btn" style="margin-top: 10px;">Recover Wallet</button>
         </div>
         <div id="seed-view" class="hidden">
             <h3>Secret Recovery Phrase</h3>
@@ -31,6 +34,13 @@
             <p>Set a 4-digit PIN to quickly access your wallet.</p>
             <input type="password" id="setup-pin" placeholder="4-digit PIN" maxlength="4">
             <button id="btn-set-pin">Set PIN</button>
+        </div>
+        <div id="recover-view" class="hidden">
+            <h3>Recover Wallet</h3>
+            <p>Enter your 12-word seed phrase.</p>
+            <textarea id="recover-phrase" placeholder="word1 word2 ... word12" rows="3" style="width: 100%; margin-bottom: 10px; padding: 10px; box-sizing: border-box;"></textarea>
+            <input type="password" id="recover-pin" placeholder="Set new 4-digit PIN" maxlength="4">
+            <button id="btn-recover-confirm">Recover</button>
         </div>
 
         <div id="wallet-view" class="hidden">
