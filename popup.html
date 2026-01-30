@@ -8,32 +8,24 @@
 </head>
 <body>
     <div class="container">
-        <h2>My Wallet</h2>
-        
-        <!-- Login View -->
+        <h2>BetaSafe</h2>
         <div id="login-view" class="hidden">
             <p>Welcome back!</p>
+            <video class="vid" src="./image/loginAnimation.mp4" muted autoplay loop></video>
             <input type="password" id="login-password" placeholder="Enter 4-digit PIN" maxlength="4">
             <button id="btn-login">Unlock</button>
             <p id="login-error" class="error hidden"></p>
         </div>
-
-        <!-- Setup View -->
         <div id="setup-view" class="hidden">
-            <p>Get started with your crypto wallet.</p>
+            <video class="vid" src="./image/loginAnimation.mp4" muted autoplay loop></video>
             <button id="btn-create-start">Create New Wallet</button>
-            <!-- Import functionality omitted for brevity in this step, focusing on create -->
         </div>
-
-        <!-- Seed Phrase View -->
         <div id="seed-view" class="hidden">
             <h3>Secret Recovery Phrase</h3>
             <p class="small-text">Save these words in a safe place. You will need them to recover your wallet.</p>
             <div id="seed-phrase" class="seed-box"></div>
             <button id="btn-confirm-seed">I Have Saved It</button>
         </div>
-
-        <!-- PIN Setup View -->
         <div id="pin-setup-view" class="hidden">
             <h3>Create Login PIN</h3>
             <p>Set a 4-digit PIN to quickly access your wallet.</p>
@@ -41,7 +33,6 @@
             <button id="btn-set-pin">Set PIN</button>
         </div>
 
-        <!-- Main Wallet View -->
         <div id="wallet-view" class="hidden">
             <span id="address"></span>
             <h1><span id="balance">0.00</span> ETH</h1>
@@ -54,9 +45,8 @@
                 <p id="send-msg" class="error hidden"></p>
             </div>
 
-            <h3>History</h3>
+            <img src="./image/history-svgrepo-com.svg" width="40px" height="40px" alt="history">
             <div id="tx-history">
-                <!-- Transactions will be injected here -->
             </div>
             <button id="btn-logout" class="secondary-btn">Logout</button>
         </div>

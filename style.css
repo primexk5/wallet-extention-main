@@ -1,18 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 320px;
-    margin: 0;
+    height: 400px;
     padding: 15px;
-    background-color: #1a1a1a;
+    background-image: url('./image/backgroundImage.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
     color: #e0e0e0;
+    overflow: hidden;
 }
 
 .container {
-    background: #2d2d2d;
+    background: transparent;
+    height: fit-content;
     padding: 20px;
-    border-radius: 8px;
+    margin-top: 30px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     text-align: center;
+}
+
+.vid {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 h2, h3 {
@@ -25,7 +40,7 @@ input {
     padding: 10px;
     margin: 8px 0;
     box-sizing: border-box;
-    background-color: #3d3d3d;
+    background-color: transparent;
     border: 1px solid #555;
     border-radius: 4px;
     color: white;
@@ -41,7 +56,7 @@ button {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
-    background-color: #444;
+    background-color: #5050fa;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -50,7 +65,7 @@ button {
 }
 
 button:hover {
-    background-color: #666;
+    background-color: #4747eb;
 }
 
 .secondary-btn {
@@ -60,6 +75,11 @@ button:hover {
 
 .hidden {
     display: none;
+    margin-top: 10px;
+}
+
+.pin {
+    background-color: transparent;
 }
 
 #address {
@@ -73,8 +93,23 @@ button:hover {
     margin: 5px 0;
 }
 
+#setup-pin {
+    background: transparent;
+    margin-top: 10px;
+}
+
+#send-to {
+    background: transparent;
+    margin-top: 4px;
+}
+
+#send-amount {
+    background: transparent;
+    margin-top: 4px;
+}
+
 .history-item {
-    background: #363636;
+    background: transparent;
     padding: 10px;
     margin-bottom: 8px;
     border-radius: 4px;
@@ -97,8 +132,8 @@ button:hover {
 .seed-box {
     background: #222;
     border: 1px solid #444;
-    padding: 10px;
-    margin: 10px 0;
+    padding: 10px 40px;
+    margin: 20px 0;
     border-radius: 4px;
     color: #81c784;
     font-family: monospace;
@@ -109,4 +144,13 @@ button:hover {
 .small-text {
     font-size: 0.85em;
     color: #aaa;
+}
+
+#btn-logout {
+    background-color: #f64f4f;
+    margin-top: 10px;
+}
+
+#login-password {
+    background-color: transparent;
 }
