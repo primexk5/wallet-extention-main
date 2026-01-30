@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const seedView = document.getElementById('seed-view');
     const pinSetupView = document.getElementById('pin-setup-view');
     const walletView = document.getElementById('wallet-view');
-    const recoverView = document.getElementById('recover-view'); 
+    const recoverView = document.getElementById('recover-view');
 
     // Elements
     const addressSpan = document.getElementById('address');
@@ -18,14 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const seedPhraseDiv = document.getElementById('seed-phrase');
     const errorMsg = document.getElementById('login-error');
     const sendMsg = document.getElementById('send-msg');
+    const networkSelector = document.getElementById('network-selector');
+    const currencySymbol = document.getElementById('currency-symbol');
+    const sendCurrency = document.getElementById('send-currency');
 
     // Inputs
     const loginPassInput = document.getElementById('login-password');
     const setupPinInput = document.getElementById('setup-pin');
     const sendToInput = document.getElementById('send-to');
     const sendAmountInput = document.getElementById('send-amount');
-    const recoverPhraseInput = document.getElementById('recover-phrase'); 
-    const recoverPinInput = document.getElementById('recover-pin'); 
+    const recoverPhraseInput = document.getElementById('recover-phrase');
+    const recoverPinInput = document.getElementById('recover-pin');
 
     // Buttons
     const btnLogin = document.getElementById('btn-login');
@@ -34,8 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSetPin = document.getElementById('btn-set-pin');
     const btnSend = document.getElementById('btn-send');
     const btnLogout = document.getElementById('btn-logout');
-    const btnRecoverMode = document.getElementById('btn-recover-mode'); 
-    const btnRecoverConfirm = document.getElementById('btn-recover-confirm'); 
+    const btnRecoverMode = document.getElementById('btn-recover-mode');
+    const btnRecoverConfirm = document.getElementById('btn-recover-confirm');
     const btnRecoverCancel = document.getElementById('btn-recover-cancel');
 
     // Check if wallet exists
@@ -49,6 +52,25 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
         if (e.target === document.body) {
             window.close();
+        }
+    });
+
+    // --- Network Selector Setup ---
+    const networks = walletManager.getNetworks();
+    Object.keys(networks).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = networks[key].name;
+        if (key === walletManager.network) option.selected = true;
+        networkSelector.appendChild(option);
+    });
+
+    networkSelector.addEventListener('change', async (e) => {
+        try {
+            await walletManager.switchNetwork(e.target.value);
+            updateUI();
+        } catch (error) {
+            alert("Failed to switch network: " + error.message);
         }
     });
 
@@ -69,9 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = walletManager.generateMnemonic();
         tempMnemonic = data.phrase;
         tempAddress = data.address;
-        
+
         seedPhraseDiv.textContent = tempMnemonic;
-        
+
         setupView.classList.add('hidden');
         seedView.classList.remove('hidden');
     });
@@ -95,23 +117,23 @@ document.addEventListener('DOMContentLoaded', () => {
     btnSend.addEventListener('click', async () => {
         const to = sendToInput.value;
         const amount = sendAmountInput.value;
-        if(!to || !amount) {
+        if (!to || !amount) {
             sendMsg.textContent = "Please fill in all fields";
             sendMsg.style.color = "#ff6b6b";
             sendMsg.classList.remove('hidden');
             return;
         }
-        
+
         try {
             sendMsg.textContent = "Sending...";
             sendMsg.classList.remove('hidden');
-            
+
             await walletManager.sendTransaction(to, amount);
             updateUI();
             sendToInput.value = '';
             sendAmountInput.value = '';
             sendMsg.textContent = "Transaction Sent!";
-            sendMsg.style.color = "#4caf50"; 
+            sendMsg.style.color = "#4caf50";
         } catch (e) {
             sendMsg.textContent = e.message;
             sendMsg.style.color = "#ff6b6b";
@@ -120,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnLogout.addEventListener('click', () => {
-        location.reload(); 
+        location.reload();
     });
 
     // --- Recovery Logic ---
@@ -135,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnRecoverConfirm.addEventListener('click', async () => {
             const phrase = recoverPhraseInput.value.trim();
             const pin = recoverPinInput.value;
-            
+
             if (!phrase || !pin) return alert("Please fill in all fields");
             if (!/^\d{4}$/.test(pin)) return alert("PIN must be 4 digits");
 
@@ -165,8 +187,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateUI() {
         addressSpan.textContent = walletManager.address;
         balanceSpan.textContent = walletManager.balance.toFixed(4);
-        historyList.innerHTML = walletManager.history.map(tx => 
-            `<div class="history-item">Sent to: ${tx.to.substring(0,10)}... <span class="history-amount">-${tx.amount} ETH</span></div>`
-        ).join('');
+        const networks = walletManager.getNetworks();
+        const currentNetwork = networks[walletManager.network];
+        currencySymbol.textContent = currentNetwork.symbol;
+        if (sendCurrency) sendCurrency.textContent = currentNetwork.symbol;
+
+        historyList.innerHTML = walletManager.history
+            .filter(tx => !tx.network || tx.network === walletManager.network)
+            .map(tx =>
+                `<div class="history-item">Sent to: ${tx.to.substring(0, 10)}... <span class="history-amount">-${tx.amount} ${currentNetwork.symbol}</span></div>`
+            ).join('');
     }
 });

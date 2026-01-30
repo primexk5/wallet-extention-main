@@ -172,3 +172,34 @@ button:hover {
 #login-password {
     background-color: transparent;
 }
+
+.network-selector-container {
+    margin-bottom: 10px;
+}
+
+#network-selector {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: 1px solid #555;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#network-selector:hover {
+    border-color: #888;
+}
+
+#network-selector option {
+    background-color: #222;
+    color: white;
+}
+
+#currency-symbol {
+    font-size: 0.6em;
+    color: #aaa;
+    vertical-align: middle;
+}
