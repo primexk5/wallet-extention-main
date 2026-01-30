@@ -1,14 +1,59 @@
 
+const NETWORKS = {
+    sepolia: {
+        name: "Sepolia Testnet",
+        rpc: "https://sepolia.drpc.org",
+        chainId: 11155111,
+        symbol: "ETH"
+    },
+    mainnet: {
+        name: "Ethereum Mainnet",
+        rpc: "https://eth.drpc.org",
+        chainId: 1,
+        symbol: "ETH"
+    },
+    polygon: {
+        name: "Polygon Mainnet",
+        rpc: "https://polygon.drpc.org",
+        chainId: 137,
+        symbol: "MATIC"
+    },
+    amoy: {
+        name: "Polygon Amoy",
+        rpc: "https://rpc-amoy.polygon.technology",
+        chainId: 80002,
+        symbol: "MATIC"
+    }
+};
+
 class WalletManager {
     constructor() {
-        //  Sepolia Testnet (public RPC)
-        this.provider = new ethers.JsonRpcProvider("https://sepolia.drpc.org");
+        this.network = localStorage.getItem('current_network') || 'sepolia';
+        this.provider = new ethers.JsonRpcProvider(NETWORKS[this.network].rpc);
         this.wallet = null;
         this.address = null;
         this.balance = 0;
         this.history = [];
         this.currentPin = null; 
         this.mnemonic = null;
+    }
+
+    getNetworks() {
+        return NETWORKS;
+    }
+
+    async switchNetwork(networkKey) {
+        if (!NETWORKS[networkKey]) throw new Error("Invalid network");
+        
+        this.network = networkKey;
+        localStorage.setItem('current_network', networkKey);
+        this.provider = new ethers.JsonRpcProvider(NETWORKS[this.network].rpc);
+        
+        if (this.wallet) {
+            // Re-instantiate wallet with new provider
+            this.wallet = ethers.Wallet.fromPhrase(this.mnemonic, this.provider);
+            await this.updateBalance();
+        }
     }
 
     hasWallet() {
@@ -98,7 +143,8 @@ class WalletManager {
             to,
             amount: parseFloat(amount),
             date: new Date().toLocaleTimeString(),
-            hash: txResponse.hash
+            hash: txResponse.hash,
+            network: this.network
         };
         this.history.unshift(tx);
         this.save();
