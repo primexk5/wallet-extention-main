@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnRecoverConfirm = document.getElementById('btn-recover-confirm');
     const btnRecoverCancel = document.getElementById('btn-recover-cancel');
     const btnCopySeed = document.getElementById('btn-copy-seed');
+    const btnRefreshHistory = document.getElementById('btn-refresh-history');
 
     // Check if wallet exists
     if (walletManager.hasWallet()) {
@@ -180,6 +181,22 @@ document.addEventListener('DOMContentLoaded', () => {
         location.reload();
     });
 
+    if (btnRefreshHistory) {
+        btnRefreshHistory.addEventListener('click', async () => {
+            btnRefreshHistory.textContent = 'Loading...';
+            btnRefreshHistory.disabled = true;
+            try {
+                await walletManager.fetchTransactionHistory();
+                updateUI();
+            } catch (e) {
+                console.error('Failed to refresh history:', e);
+            } finally {
+                btnRefreshHistory.textContent = 'Refresh History';
+                btnRefreshHistory.disabled = false;
+            }
+        });
+    }
+
     // --- Recovery Logic ---
     if (btnRecoverMode) {
         btnRecoverMode.addEventListener('click', () => {
@@ -229,8 +246,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         historyList.innerHTML = walletManager.history
             .filter(tx => !tx.network || tx.network === walletManager.network)
-            .map(tx =>
-                `<div class="history-item">Sent to: ${tx.to.substring(0, 10)}... <span class="history-amount">-${tx.amount} ${currentNetwork.symbol}</span></div>`
-            ).join('');
+            .map(tx => {
+                const isReceived = tx.type === 'received';
+                const counterparty = isReceived ? tx.from : tx.to;
+                const icon = isReceived ? '⬇️' : '⬆️';
+                const sign = isReceived ? '+' : '-';
+                const color = isReceived ? '#4caf50' : '#ff6b6b';
+                return `<div class="history-item">
+                    ${icon} ${isReceived ? 'Received' : 'Sent'} ${isReceived ? 'from' : 'to'}: ${counterparty.substring(0, 10)}... 
+                    <span class="history-amount" style="color: ${color}">${sign}${tx.amount} ${currentNetwork.symbol}</span>
+                </div>`;
+            }).join('');
     }
 });

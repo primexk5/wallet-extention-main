@@ -97,6 +97,103 @@ class WalletManager {
         }
     }
 
+    async fetchTransactionHistory() {
+        if (!this.address) return;
+        
+        try {
+            const blockNumber = await this.provider.getBlockNumber();
+            const fromBlock = Math.max(0, blockNumber - 1000); // Last 1000 blocks
+            
+            // Fetch incoming transactions (to this address)
+            const incomingFilter = {
+                toAddress: this.address,
+                fromBlock: fromBlock,
+                toBlock: blockNumber
+            };
+            
+            // Fetch outgoing transactions (from this address)
+            const outgoingFilter = {
+                fromAddress: this.address,
+                fromBlock: fromBlock,
+                toBlock: blockNumber
+            };
+            
+            // Query logs for transfers (this is a simplified approach)
+            const allLogs = await this.provider.getLogs({
+                address: null,
+                fromBlock: fromBlock,
+                toBlock: blockNumber
+            });
+            
+            // Filter for transactions involving this address
+            for (const log of allLogs) {
+                if (log.address && (log.topics[1] === ethers.zeroPadValue(this.address, 32) || 
+                    log.topics[2] === ethers.zeroPadValue(this.address, 32))) {
+                    // This is a token transfer, add to history if not already present
+                    const txHash = log.transactionHash;
+                    if (!this.history.find(tx => tx.hash === txHash)) {
+                        try {
+                            const tx = await this.provider.getTransaction(txHash);
+                            if (tx) {
+                                const type = tx.from.toLowerCase() === this.address.toLowerCase() ? 'sent' : 'received';
+                                const amount = parseFloat(ethers.formatEther(tx.value || 0));
+                                const counterparty = type === 'sent' ? tx.to : tx.from;
+                                
+                                this.history.unshift({
+                                    hash: txHash,
+                                    type: type,
+                                    to: type === 'sent' ? tx.to : tx.from,
+                                    from: tx.from,
+                                    amount: amount,
+                                    date: new Date().toLocaleTimeString(),
+                                    network: this.network
+                                });
+                            }
+                        } catch (e) {
+                            console.log("Error fetching transaction details:", e);
+                        }
+                    }
+                }
+            }
+            
+            // Also fetch native ETH transfers
+            try {
+                const txns = [];
+                for (let i = blockNumber - 100; i <= blockNumber; i++) {
+                    const block = await this.provider.getBlock(i);
+                    if (block) {
+                        for (const txHash of block.transactions) {
+                            const tx = await this.provider.getTransaction(txHash);
+                            if (tx && (tx.from.toLowerCase() === this.address.toLowerCase() || 
+                                      tx.to?.toLowerCase() === this.address.toLowerCase())) {
+                                if (!this.history.find(h => h.hash === txHash)) {
+                                    const type = tx.from.toLowerCase() === this.address.toLowerCase() ? 'sent' : 'received';
+                                    const amount = parseFloat(ethers.formatEther(tx.value || 0));
+                                    
+                                    this.history.unshift({
+                                        hash: txHash,
+                                        type: type,
+                                        to: tx.to,
+                                        from: tx.from,
+                                        amount: amount,
+                                        date: new Date().toLocaleTimeString(),
+                                        network: this.network
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log("Error fetching native transactions:", e);
+            }
+            
+            this.save();
+        } catch (error) {
+            console.error("Failed to fetch transaction history:", error);
+        }
+    }
+
     generateMnemonic() {
         const wallet = ethers.Wallet.createRandom();
         return {
@@ -140,10 +237,12 @@ class WalletManager {
         });
 
         const tx = {
-            to,
+            hash: txResponse.hash,
+            type: 'sent',
+            to: to,
+            from: this.address,
             amount: parseFloat(amount),
             date: new Date().toLocaleTimeString(),
-            hash: txResponse.hash,
             network: this.network
         };
         this.history.unshift(tx);
